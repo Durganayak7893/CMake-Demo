@@ -79,3 +79,23 @@ jobs:
         with:
           name: MyProject-Package
           path: MyProject.tar.gz
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Package
+        uses: actions/download-artifact@v7
+        with:
+          name: MyProject-Package
+          path: release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: MyProject v1.0.${{ github.run_number }}
+          files: release/MyProject.tar.gz
