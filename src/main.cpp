@@ -8,6 +8,6 @@ int main()
 
     std::cout << "Addition: " << result1 << std::endl;
     std::cout << "Subtraction: " << result2 << std::endl;
-
+std::cout << "CMake project running successfully!" << std::endl;
     return 0;
 }
