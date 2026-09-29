@@ -56,3 +56,26 @@ jobs:
 
       - name: Run Tests
         run: ctest --test-dir build --output-on-failure -C ${{ matrix.build_type }}
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Release Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: build-*-Release
+          path: release-builds
+          merge-multiple: false
+
+      - name: Create Package
+        run: |
+          mkdir package
+          cp -r release-builds package/builds
+          tar -czf MyProject.tar.gz package
+
+      - name: Upload Package
+        uses: actions/upload-artifact@v6
+        with:
+          name: MyProject-Package
+          path: MyProject.tar.gz
