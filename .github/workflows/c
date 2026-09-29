@@ -99,3 +99,21 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: MyProject v1.0.${{ github.run_number }}
           files: release/MyProject.tar.gz
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Package
+        uses: actions/download-artifact@v7
+        with:
+          name: MyProject-Package
+          path: deploy
+
+      - name: Deploy Application
+        run: |
+          echo "Starting deployment..."
+          echo "Package contents:"
+          ls -lh deploy
+          echo "Deploying MyProject..."
+          echo "Deployment completed successfully!"
