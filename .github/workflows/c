@@ -8,6 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
+
   build:
     strategy:
       matrix:
@@ -26,11 +27,32 @@ jobs:
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
 
-      - name: Run Tests
-        run: ctest --test-dir build --output-on-failure -C ${{ matrix.build_type }}
-
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v6
         with:
           name: build-${{ matrix.os }}-${{ matrix.build_type }}
           path: build/
+
+
+  test:
+    needs: build
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Debug, Release]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.build_type }}
+          path: build/
+
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure -C ${{ matrix.build_type }}
